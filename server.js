@@ -3,8 +3,10 @@ import bcrypt from "bcrypt-nodejs";
 import cors from 'cors'
 
 const app = express();
+
+app.use(cors({ origin: true }));
 app.use(express.json())
-app.use(cors('http://localhost:3000'))
+
 
 //TEMP SAMPLE DATABASE
 const database = {
@@ -50,8 +52,8 @@ app.post('/signin', (req, res) => {
     if (req.body.email === database.users[0].email &
         req.body.password === database.users[0].password) {
 
-            res.json('success');
-   
+            res.json(database.users[0]);
+            
         }
     else {
 
@@ -65,17 +67,16 @@ app.post('/signin', (req, res) => {
 
 //REGISTER
 app.post('/register', (req, res) => {
-    const {email, name, password} = req.body;
+    const {email, name} = req.body;
     database.users.push({
         id: '125',
         name: name,
         email: email,
-        password: password,
         entries: 0,
         joined: new Date()   
     })
 
-    res.json(database.users[database.users.length - 1])
+    res.json(database.users)
 
 })
 
@@ -100,7 +101,7 @@ app.get('/profile/:id', (req, res) => {
 
 
 //IMAGE
-app.post('/image', (req, res) => {
+app.put('/image', (req, res) => {
     const {id} = req.body;
     let found = false;
     database.users.forEach(user => {
