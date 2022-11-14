@@ -1,6 +1,19 @@
 import express from "express";
 import bcrypt from "bcrypt-nodejs";
 import cors from 'cors'
+import knex from 'knex'
+
+const db = knex({
+    client: 'pg',
+    connection: {
+      host : '127.0.0.1',
+      port : 5432,
+      user : 'postgres',
+      password : 'test',
+      database : 'smart-brain'
+    }
+  });
+  
 
 const app = express();
 
@@ -68,36 +81,39 @@ app.post('/signin', (req, res) => {
 //REGISTER
 app.post('/register', (req, res) => {
     const {email, name} = req.body;
-    database.users.push({
-        id: '125',
-        name: name,
-        email: email,
-        entries: 0,
-        joined: new Date()   
+    db('users')
+        .returning('*')
+        .insert({
+            email: email,
+            name: name,
+            joined: new Date()
     })
+    .then(user => {
+        res.json(user[0])
+    })
+    .catch(err => res.status(400).json("Unable to register"))
 
-    res.json(database.users)
 
 })
 
 
 //PROFILE
 app.get('/profile/:id', (req, res) => {
- 
-    
     const {id} = req.params;
-    let found = false;
-    database.users.forEach(user => {
-        if (user.id === id) {
-            found = true;
-            user.entries++
-            return res.json(user.entries)
-        }
-    })
-    if (!found){
-        res.status(404).json('no such user');
-    }
+
+    db.select('*').from('users').where({id: id})
+        .then(user => {
+            if(user.length){
+                res.json(user[0])
+            } else {
+                res.status(400).json('User not found')
+            }
+        })
+        .catch(err => res.status(400).json('Error getting user'))    
+
 })
+    
+
 
 
 //IMAGE
