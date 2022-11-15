@@ -28,7 +28,7 @@ app.use(express.json())
 
 //ROOT
 app.get('/', (req, res) => {
-    res.send(database.users)
+    res.send("It is working")
 })
 
 //SIGN IN
