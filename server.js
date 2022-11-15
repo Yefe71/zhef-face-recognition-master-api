@@ -8,11 +8,10 @@ import handleProfile from "./controllers/profile.js";
 import handleImage from "./controllers/image.js";
 
 const db = knex({
-    client: 'pg',
+    client: "pg",
     connection: {
-      connectionString : process.env.DATABASE_URL,
-      ssl: true
-
+      connectionString: process.env.DATABASE_URL,
+      ssl: { rejectUnauthorized: false },
     }
   });
   
