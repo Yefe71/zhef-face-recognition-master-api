@@ -10,11 +10,9 @@ import handleImage from "./controllers/image.js";
 const db = knex({
     client: 'pg',
     connection: {
-      host : 'postgresql-elliptical-58539',
-      port : 5432,
-      user : 'postgres',
-      password : 'test',
-      database : 'smart-brain'
+      host : process.env.DATABASE_URL,
+      ssl: true
+
     }
   });
   
